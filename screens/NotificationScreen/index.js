@@ -8,12 +8,13 @@ import {
   Text,
   Dimensions,
   TextInput,
-  Switch,
   StyleSheet,
   Alert,
   Platform,
 } from 'react-native';
 import moment from 'moment';
+import { Switch } from 'react-native-paper';
+
 import * as Calendar from 'expo-calendar';
 import * as Localization from 'expo-localization';
 import Constants from 'expo-constants';
@@ -27,8 +28,10 @@ import { Kohana } from 'react-native-textinput-effects';
 import { Context } from '../../data/Context';
 import TodoStore from '../../data/TodoStore';
 import { Task } from '../../components/Task';
+import Fire from "../../utils/Fire";
 
-
+const firebase = require("firebase");
+require("firebase/firestore");
 
 export default class Home extends Component {
   state = {
@@ -40,6 +43,7 @@ export default class Home extends Component {
     ],
     todoList: [],
     markedDate: [],
+
     currentDate: `${moment().format('YYYY')}-${moment().format(
       'MM'
     )}-${moment().format('DD')}`,
@@ -48,14 +52,29 @@ export default class Home extends Component {
     isModalVisible: false,
     selectedTask: null,
     isDateTimePickerVisible: false,
+    user: {},
+
   };
 
   async componentWillMount() {
     await this._handleDeletePreviousDayTask();
     await this._askForCalendarPermissions();
     await this._askForReminderPermissions();
+
   }
 
+  componentDidMount() {
+    const user = this.props.uid || Fire.shared.uid
+    this.unsubscribe = Fire.shared.firestore.collection('users').doc(user).onSnapshot(doc => {
+      this.setState({ user: doc.data() })
+    })
+
+
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe()
+  }
 
   _askForCalendarPermissions = async () => {
     await Permissions.askAsync(Permissions.CALENDAR);
@@ -129,9 +148,10 @@ export default class Home extends Component {
         if (todoLists.length !== 0) {
           this.setState({
             markedDate: markDot,
-            
+
+
             todoList: todoLists[0].todoList,
-            
+
           });
         } else {
           this.setState({
@@ -324,25 +344,39 @@ export default class Home extends Component {
                 />
                 <View style={styles.taskContainer}>
 
-
-
-                  <TouchableOpacity
-                    onPress={() => {
-                      this.setState(
-                        {
-
-                          isModalVisible: false,
-                        },
-                      );
-                    }}
+                  <View style={{flexDirection:'row'}}>
+                  <Text
                     style={{
-
-                      left: 265,
-                      bottom: 10,
+                      color: '#000',
+                      fontSize: 16,
+                      fontWeight: '600',
+                      marginLeft: 35,
+                      bottom:10,
+                      fontFamily: 'Poppins_400Regular'
                     }}
                   >
-                    <FontAwesome5 name="times-circle" color="#ff4343" size={24} />
-                  </TouchableOpacity>
+                    Actualizar o eliminar Tarea
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() => {
+                        this.setState(
+                          {
+
+                            isModalVisible: false,
+                          },
+                        );
+                      }}
+                      style={{
+
+                        left: 20,
+                        bottom: 10,
+                      }}
+                    >
+                      <FontAwesome5 name="times-circle" color="#ff4343" size={24} />
+                    </TouchableOpacity>
+                  </View>
+
+
 
                   <Text
                     style={{
@@ -486,6 +520,7 @@ export default class Home extends Component {
                     <Switch
                       value={selectedTask.alarm.isOn}
                       onValueChange={this.handleAlarmSet}
+                      color="#af42de"
                     />
                   </View>
                   <View
@@ -496,18 +531,18 @@ export default class Home extends Component {
                     }}
                   >
                     <TouchableOpacity
-                 disabled={selectedTask.title === ''}
-                 style={[
-                  styles.updateButton,
-                   {
-                     backgroundColor:
-                       selectedTask.title === ''
-                         ? '#b5d3bb'
-                         : '#87d396',
-                         
-                       
-                   },
-                 ]}
+                      disabled={selectedTask.title === ''}
+                      style={[
+                        styles.updateButton,
+                        {
+                          backgroundColor:
+                            selectedTask.title === ''
+                              ? '#b5d3bb'
+                              : '#87d396',
+
+
+                        },
+                      ]}
 
                       onPress={async () => {
                         this._handleModalVisible();
@@ -522,7 +557,7 @@ export default class Home extends Component {
                         });
                         this._updateCurrentTask(currentDate);
                       }}
-                     
+
                     >
                       <Text
                         style={{
@@ -568,7 +603,8 @@ export default class Home extends Component {
             <View
               style={{
                 flex: 1,
-                backgroundColor: '#FFF'
+                backgroundColor: '#fff',
+
               }}
             >
 
@@ -576,21 +612,30 @@ export default class Home extends Component {
                 ref={ref => {
                   this.calenderRef = ref;
                 }}
-                calendarAnimation={{ type: 'sequence', duration: 800 }}
+                calendarAnimation={{ type: 'sequence', duration: 100 }}
                 daySelectionAnimation={{
                   type: 'background',
-                  duration: 800,
-                  highlightColor: '#ffffff',
+                  duration: 100,
+                  highlightColor: '#fff',
                 }}
+
+
+
                 style={{
+                  backgroundColor: '#fff',
                   height: 150,
                   paddingTop: 20,
+                  marginTop: 20,
                   paddingBottom: 20,
+
+
+
                 }}
-                
-                calendarHeaderStyle={{ color: '#000000' }}
+
+                useIsoWeekday={false}
+                calendarHeaderStyle={{ color: '#000000', }}
                 dateNumberStyle={{ color: '#000000', paddingTop: 10 }}
-                dateNameStyle={{ color: '#BBBBBB' }}
+                dateNameStyle={{ color: '#000' }}
                 highlightDateNumberStyle={{
                   color: '#fff',
                   backgroundColor: '#87d396',
@@ -604,17 +649,24 @@ export default class Home extends Component {
                   fontWeight: '400',
                   justifyContent: 'center',
                   alignItems: 'center',
+
                 }}
-               
+
                 highlightDateNameStyle={{ color: '#87d396' }}
                 disabledDateNameStyle={{ color: 'grey' }}
                 disabledDateNumberStyle={{ color: 'grey', paddingTop: 10 }}
+
+                //Este lo saco y veo los dias anteriores!
                 datesWhitelist={datesWhitelist}
+
                 iconLeft={require('../../assets/left-arrow.png')}
+
                 iconRight={require('../../assets/right-arrow.png')}
                 iconContainer={{ flex: 0.1 }}
                 markedDates={markedDate}
-                calendarHeaderStyle={{textTransform:'capitalize'}}
+
+
+                calendarHeaderStyle={{ textTransform: 'capitalize', fontSize: 18 }}
                 onDateSelected={date => {
                   const selectedDate = `${moment(date).format('YYYY')}-${moment(
                     date
@@ -625,6 +677,7 @@ export default class Home extends Component {
                   });
                 }}
               />
+
               <TouchableOpacity
                 onPress={() =>
                   navigation.navigate('nuevoRutina', {
@@ -643,22 +696,50 @@ export default class Home extends Component {
                   }}
                 />
               </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('Yo')
+                }
+                style={styles.photo}
+              >
+                <Image source={{ uri: this.state.user.avatar }}
+
+                  style={
+
+                    {
+                      borderRadius: 400 / 2,
+                      width: 48,
+                      height: 48,
+                    }
+                  }
+                />
+              </TouchableOpacity>
+
               <View
                 style={{
                   width: '100%',
-                  height: Dimensions.get('window').height - 120,
+                  height: Dimensions.get('window').height - 60,
+                  bottom: 60,
+                  borderRadius: 25,
+                  borderTopWidth: 4,
+                  borderColor: '#fff'
+
 
                 }}
               >
                 <ScrollView
                   showsVerticalScrollIndicator={false}
                   contentContainerStyle={{
-                    paddingBottom: 120,
+                    paddingBottom: 180,
+
+
                   }}
                 >
                   {todoList.map(item => (
                     <TouchableOpacity
-                      onPress={() => {
+                      delayLongPress={50}
+                      onLongPress={() => {
                         this.setState(
                           {
                             selectedTask: item,
@@ -670,7 +751,36 @@ export default class Home extends Component {
                         );
                       }}
                       key={item.key}
-                      style={styles.taskListContent}
+                      style={{
+                        height: 100,
+                        width: 327,
+                        alignSelf: 'center',
+                        borderRadius: 10,
+                        shadowColor: '#87d396',
+                        backgroundColor: '#fff',
+                        borderColor: item.color,
+                        borderWidth: 1,
+
+                        borderTopStartRadius: 1,
+                        borderBottomEndRadius: 1,
+                        borderBottomStartRadius: 35,
+
+                        borderTopEndRadius: 35,
+
+                        marginTop: 10,
+                        marginBottom: 10,
+                        shadowOffset: {
+                          width: 3,
+                          height: 3,
+                        },
+                        shadowRadius: 5,
+                        shadowOpacity: 0.2,
+                        elevation: 8,
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+
+                      }}
                     >
                       <View
                         style={{
@@ -758,11 +868,16 @@ export default class Home extends Component {
                       </View>
                       <View
                         style={{
-                          height: 80,
+                          height: 65,
                           width: 12,
                           backgroundColor: item.color,
                           borderRadius: 5,
-                          right: 2
+                          borderTopEndRadius: 60,
+                          borderBottomEndRadius: 60,
+
+                          right: 2,
+
+
                         }}>
 
                       </View>
@@ -786,6 +901,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     shadowColor: '#87d396',
     backgroundColor: '#fff',
+
+    borderWidth: 1,
+
+    borderTopStartRadius: 1,
+    borderBottomStartRadius: 35,
+
+    borderTopEndRadius: 35,
+
     marginTop: 10,
     marginBottom: 10,
     shadowOffset: {
@@ -802,7 +925,7 @@ const styles = StyleSheet.create({
   viewTask: {
 
     bottom: 140,
-    left: 300,
+    left: 310,
     height: 30,
     width: 30,
     backgroundColor: '#87d396',
@@ -819,6 +942,28 @@ const styles = StyleSheet.create({
     elevation: 5,
     zIndex: 999,
   },
+
+  photo: {
+
+    bottom: 190,
+    left: 10,
+    height: 50,
+    width: 50,
+    backgroundColor: '#87d396',
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#87d396',
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowRadius: 30,
+    shadowOpacity: 0.5,
+    elevation: 5,
+    zIndex: 999,
+  },
+
   deleteButton: {
     backgroundColor: '#ff4343',
     width: 100,
@@ -829,7 +974,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   updateButton: {
-   
+
     width: 100,
     height: 38,
     alignSelf: 'center',

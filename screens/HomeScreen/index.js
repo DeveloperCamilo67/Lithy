@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { withNavigationFocus } from "react-navigation";
 
 import { Container, Header, Title, Feed, Image, ImageBack } from "./styles";
@@ -9,10 +9,15 @@ require("firebase/firestore");
 import Fire from "../../utils/Fire";
 
 import ItemTask from "../../components/Posts";
-
+import { RefreshControl } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 function HomeScreen({ isFocused, navigation }) {
   const [posts, setPosts] = useState([]);
+  const [postsdos, setPostsdos] = useState([]);
+
   const [user, setUser] = useState({});
+  const scrollViewRef = useRef()
+  const [isFetching, setIsFetching] = useState(false);
 
   useEffect(() => {
     if (isFocused) {
@@ -20,9 +25,25 @@ function HomeScreen({ isFocused, navigation }) {
     }
   }, [isFocused]);
 
+
+
+
   useEffect(() => {
     getUser();
   }, []);
+
+  useEffect(() => {
+    scrollHastaElFinal();
+  }, [isFocused]);
+
+  function refresh() {
+    setIsFetching(true)
+    setTimeout(() => {
+      setIsFetching(false)
+      getDocs();
+
+    }, 2500);
+  }
 
   function getUser() {
     let unsubscribe = null;
@@ -55,7 +76,12 @@ function HomeScreen({ isFocused, navigation }) {
       let timestamp = document.data().timestamp
       let text = document.data().text
       let imagestate = document.data().imagestate
-      let obj = { id, name, apellido, avatar, pais, selectedItemObjects, timestamp, text, imagestate }
+      let likes = document.data().likes
+
+      let obj = {
+        id, name, apellido, avatar,
+        pais, selectedItemObjects, timestamp, text, imagestate, likes,
+      }
       list.push(obj)
 
     })
@@ -65,12 +91,41 @@ function HomeScreen({ isFocused, navigation }) {
 
 
   const deleteTab = async (props) => {
-    await firebase.firestore().collection("posts").doc(props.id).delete();
+    //await firebase.firestore().collection("posts").doc(props.id).delete();
+    const increment = firebase.firestore.FieldValue.increment(1);
+
+    await firebase.firestore().collection("posts").doc(props.id).update({
+
+      likes: increment,
+
+    });
     getDocs();
+
   }
 
+  const comentar = async (props) => {
+
+    await firebase.firestore().collection("posts").doc(props.id).update({
+
+      comentario: "buena onda",
+
+    });
+
+
+  }
+
+
+
   const passTo = async (props) => {
+
     navigation.navigate("taba")
+
+
+  }
+
+  const GuardarEnTablero = async (props) => {
+    await firebase.firestore().collection("tabs").doc(props.id).delete();
+
   }
 
 
@@ -87,33 +142,64 @@ function HomeScreen({ isFocused, navigation }) {
       timestamp={item.timestamp}
       text={item.text}
       imagestate={item.imagestate}
+      likes={item.likes}
       passTo={passTo}
+      deleteTab={deleteTab}
+      GuardarEnTablero={GuardarEnTablero}
+      comentar={comentar}
+
 
     />
 
   )
+  const scrollHastaElFinal = () => {
+
+    scrollViewRef.current?.scrollToOffset({
+
+      animated: true,
+    });
+  };
 
   return (
 
     <Container>
 
-      <Header>
-        <Image
-          source={require('../../assets/Picture7.png')}
-        >
-        </Image>
-      </Header>
+      <TouchableOpacity
+        activeOpacity={1}
+        onPress={scrollHastaElFinal}
+      >
 
+
+        <Header>
+          <Image
+            source={require('../../assets/Picture7.png')}
+          >
+          </Image>
+        </Header>
+      </TouchableOpacity>
       <Feed
 
         showsVerticalScrollIndicator={false}
+
         data={posts}
         renderItem={renderTabs}
         keyExtractor={item => item.id}
+        ref={(scrollViewRef)}
+        refreshControl={
+
+          <RefreshControl
+            refreshing={isFetching}
+            onRefresh={() => refresh()}
+            progressBackgroundColor="#fff"
+            colors={['#56e773', '#56cfe7', '#c856e7']}
+
+          >
+
+          </RefreshControl>
+        }
       >
 
       </Feed>
-
 
 
     </Container>

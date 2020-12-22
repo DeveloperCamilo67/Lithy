@@ -54,7 +54,8 @@ export const Avatar = styled.Image`
   width: 48px;
   height: 48px;
   border-radius: 24px;
-
+  border-width:1px;
+  border-color: #72ba83
   margin-left: 8px;
   margin-bottom: 8px;
   margin-top: 8px;
@@ -82,5 +83,6 @@ export const ViewPhoto = styled.View`
 export const ImageState = styled.Image`
 width: undefined;
 height: 450px;
-  /* background-color: #ccc; */
+  /* background-color: #ccc; */;
+  border-radius: 5px;
 `;

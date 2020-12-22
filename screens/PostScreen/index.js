@@ -31,6 +31,7 @@ import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
 import Fire from "../../utils/Fire";
 
+
 //fuentes
 import {
   useFonts, Poppins_100Thin, Poppins_100Thin_Italic, Poppins_200ExtraLight, Poppins_200ExtraLight_Italic,
@@ -52,7 +53,7 @@ export default function PostScreen({ navigation }) {
 
   const items = [
     {
-      title: '#Etiquetas',
+      title: 'Seleccione etiquetas',
       id: 0,
 
       children: [
@@ -152,6 +153,7 @@ export default function PostScreen({ navigation }) {
 
   const [user, setUser] = useState({});
   const [loader, setLoader] = useState(false);
+  const [likes, setLikes] = useState(0);
   const [selectedItems, setSelectedItems] = useState("");
   const [selectedItems2, setSelectedItems2] = useState("");
   const [selectedItemObjects, setSelectedItemObjects] = useState([]);
@@ -190,6 +192,7 @@ export default function PostScreen({ navigation }) {
 
   async function pretendToLoad() {
     setLoader(true)
+    
     setTimeout(() => {
       setLoader(false, items)
     }, 2500)
@@ -235,7 +238,7 @@ export default function PostScreen({ navigation }) {
   const noResults = () => {
     return (
       <View key="a" style={styles.center}>
-        <Text>No hay más resultados... 😥</Text>
+        <Text style={{fontSize: 18, fontFamily: "Poppins_400Regular" }}>No hay más resultados... 😥</Text>
       </View>
     );
   };
@@ -309,14 +312,15 @@ export default function PostScreen({ navigation }) {
         apellido: user.apellido,
         text,
         pais: user.pais,
+        likes,
         selectedItemObjects,
-        imagestate,
+        localUri: imagestate,
         uri: user.avatar,
       })
       .then(ref => {
 
         setText();
-
+        
         setImageState("");
         navigation.navigate("Inicio");
         setLoading(false);
@@ -354,13 +358,16 @@ export default function PostScreen({ navigation }) {
     navigation.goBack()
   }
 
+ 
   return (
 
     <Container>
       <Header>
 
         <BackButton onPress={borrar}>
-          <FontAwesome5 name="arrow-left" size={24} color="#2ed34f" />
+          <FontAwesome5 name="arrow-left" size={24} color="#87d396"
+        
+          />
 
         </BackButton>
         <View>
@@ -375,6 +382,7 @@ export default function PostScreen({ navigation }) {
           <TextInputContainer
             multiline={true}
             numberOfLine={4}
+            autoFocus={true}
             placeholder="Describe tu publicación"
             onChangeText={setText}
             value={text}
@@ -407,6 +415,7 @@ export default function PostScreen({ navigation }) {
           noResultsComponent={noResults}  //se queda
           showDropDowns={showDropDowns} // se quedaaa
           animateDropDowns={false}
+
           showRemoveAll={false}
 
           onSelectedItemsChange={onSelectedItemsChange}
@@ -477,14 +486,15 @@ export default function PostScreen({ navigation }) {
               shouldPlay={true}
               isLooping={true}
               useNativeControls
-              style={{ width: undefined, height: 450 }}
+              style={{ width: undefined, height: 450,
+                borderRadius: 5}}
             />
 
           }
 
         </ViewPhoto>
 
-
+       
       </ScrollView>
       <Header>
         <View>

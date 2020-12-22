@@ -2,10 +2,10 @@ import styled from "styled-components/native";
 
 export const Container = styled.View`
   flex: 1;
-  background-color: #f3f5f4;
+  background-color: #fff;
 `;
 export const Header = styled.View.attrs({
-  shadowColor: "#454d65",
+  shadowColor: "#87d396",
   shadowOffset: { height: 5 },
   elevation: 5,
   shadowRadius: 5,
@@ -18,7 +18,17 @@ export const Header = styled.View.attrs({
   align-items: center;
   justify-content: center;
   border-bottom-width: 1px;
-  border-bottom-color: #ebecf4;
+  
+  border-bottom-left-radius:15px;
+  border-bottom-right-radius:15px;
+border-color: #87d396;
+  border-left-width: 1px;
+  border-right-width: 1px;
+
+
+
+
+
   border-bottom-start-radius:10px;
   border-bottom-end-radius:10px;
 

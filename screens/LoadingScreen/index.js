@@ -26,8 +26,8 @@ export default function LoadingScreen({ navigation }) {
   
             <StatusBar barStyle='dark-content' backgroundColor='#FFF' />
     <AnimatedSplash
-      logoWidht={300}
-      logoHeight={300}
+      logoWidht={450}
+      logoHeight={450}
       isLoaded={isLoaded}
       backgroundColor={"#fff"}
       logoImage={require("../../assets/newlogo.png")}

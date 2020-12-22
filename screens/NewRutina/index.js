@@ -8,7 +8,6 @@ import {
   ScrollView,
   TextInput,
   Keyboard,
-  Switch,
   StyleSheet,
   Alert,
 } from 'react-native';
@@ -22,6 +21,7 @@ import {
   Txt,
 
 } from "./styles";
+import { Switch } from 'react-native-paper';
 import { CalendarList, LocaleConfig } from 'react-native-calendars';
 LocaleConfig.locales.en = LocaleConfig.locales[''];
 LocaleConfig.locales.es = {
@@ -305,7 +305,8 @@ export default class CreateTask extends Component {
               <Header>
 
                 <BackButton onPress={() => navigation.goBack()}>
-                  <FontAwesome5 name="arrow-left" size={24} color="#2ed34f" />
+                  <FontAwesome5 name="arrow-left" size={24} color="#87d396"
+          />
 
                 </BackButton>
                 <View>
@@ -467,6 +468,8 @@ export default class CreateTask extends Component {
                       <Switch
                         value={isAlarmSet}
                         onValueChange={this.handleAlarmSet}
+                        color="#af42de"
+                        
                       />
                     </View>
                   </View>

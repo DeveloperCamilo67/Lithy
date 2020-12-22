@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/iconoo.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/newlogo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -21,6 +21,10 @@
     },
     "web": {
       "favicon": "./assets/splash.png"
+    },
+    "description": "Mi proyecto en general Lithy !",
+    "android": {
+      "package": "com.wamilo.Final"
     }
   }
 }

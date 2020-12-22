@@ -46,11 +46,18 @@ export const LogoutButtonText = styled.Text`
 
 export const Feed = styled.FlatList`
   margin: 0 16px;
+
   margin-left: 10px;
   width: undefined;
+  margin-top: 10px;
   height: 380px;
+  
+
   
 `;
 
 export const ImageBack = styled.ImageBackground`
+
+border-radius: 5px;
+
 `;

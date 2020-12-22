@@ -32,7 +32,8 @@ export const ImagePost = styled.Image`
   width: 320px;
   height: 370px;
   border-radius: 5px;
-  margin: -18px 0;
+  right:10
+  margin: -12px 0;
 `;
 
 export const ViewPhoto = styled.View`

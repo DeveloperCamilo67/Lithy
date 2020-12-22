@@ -33,7 +33,7 @@ const ItemTask = (props) => {
       <Container>
 
 
-        {(props.imagestate).toString().endsWith("jpg") ?
+        {(props.imagestate).includes(".jpg")?
 
           <ImagePost source={{ uri: props.imagestate }} resizeMode="cover" />
 

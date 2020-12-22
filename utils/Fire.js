@@ -10,11 +10,12 @@ class Fire {
     firebase.initializeApp(FirebaseKeys);
   }
 
-  addPost = async ({ text, imagestate, uri, name, apellido, pais, selectedItemObjects}) => {
+  addPost = async ({ text, localUri, uri, name, apellido, pais, likes, selectedItemObjects}) => {
     // const id = uuid.v4();
     const remoteUri = await this.uploadPhotoAsync(
-      imagestate,
-      `photos/${this.uid}/${Date.now()}`
+      localUri,
+      `photos/${this.uid}/${localUri}`
+     
     );
     const avatarUri = await this.uploadPhotoAsync(uri, `avatars/${this.uid}`);
     return new Promise((res, rej) => {
@@ -29,8 +30,9 @@ class Fire {
           selectedItemObjects,
           uid: this.uid,
           pais,
+          likes,
           timestamp: this.timestamp,
-          imagestate
+          imagestate: remoteUri,
         })
         .then(ref => {
           res(ref);
@@ -63,6 +65,8 @@ class Fire {
         });
     });
   };
+
+
 
 
 

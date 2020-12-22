@@ -24,6 +24,8 @@ import {
   SCLAlertButton
 } from 'react-native-scl-alert'
 //fuentes
+import ImageLoad from 'react-native-image-placeholder';
+
 import {
   useFonts, Poppins_100Thin, Poppins_100Thin_Italic, Poppins_200ExtraLight, Poppins_200ExtraLight_Italic,
   Poppins_300Light, Poppins_300Light_Italic, Poppins_400Regular, Poppins_400Regular_Italic, Poppins_500Medium,
@@ -84,6 +86,7 @@ const ItemTask = (props) => {
         </SCLAlert>
 
         <DescriptionText style={{ fontFamily: "Poppins_500Medium" }}>{props.text}</DescriptionText>
+        
         <Container>
 
           <Directionrow>

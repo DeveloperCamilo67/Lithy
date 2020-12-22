@@ -7,10 +7,13 @@ import {
     View, Text, StyleSheet, Alert, ScrollView
 
 } from "react-native";
+import { Button } from 'react-native-paper';
 import { Container, Header, Title, Feed, Logo, LogoDos } from "./styles";
 import { TextInput } from 'react-native-gesture-handler';
 import { Kohana } from 'react-native-textinput-effects';
 import { MaterialCommunityIcons, MaterialIcons, FontAwesome5 } from '@expo/vector-icons'
+import AwesomeButtonRick from 'react-native-really-awesome-button/src/themes/red';
+
 //fuentes
 import {
     useFonts, Poppins_100Thin, Poppins_100Thin_Italic, Poppins_200ExtraLight, Poppins_200ExtraLight_Italic,
@@ -30,6 +33,10 @@ import * as firebase from "firebase";
 
 function LoginScreen({ navigation }) {
     const passwordRef = useRef();
+
+
+
+    const [progreso, setProgreso] = useState(false);
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -51,6 +58,8 @@ function LoginScreen({ navigation }) {
         }
     }
 
+  
+
     const handleClose = () => {
         setShowAlert(false)
     }
@@ -62,14 +71,21 @@ function LoginScreen({ navigation }) {
     }
     const handleOpenDos = () => {
         setShowAlertDos(true)
+     
+    }
+
+    function onFocus(value) {
+
+        setBorderColor(value)
     }
 
     function handleSubmit() {
 
 
         if ((email).length == "" || (password).length == "") {
-
+           
             handleOpen();
+          
 
         } else {
 
@@ -77,6 +93,7 @@ function LoginScreen({ navigation }) {
                 .auth()
                 .signInWithEmailAndPassword(email, password)
                 .catch(error => handleOpenDos());
+               
 
         }
 
@@ -118,34 +135,37 @@ function LoginScreen({ navigation }) {
                 <Text style={styles.text}>¡Inicia sesión con tu correo electrónico y contraseña!</Text>
                 <View style={styles.action}>
 
-                    <View style={styles.section}>
-                     
+                    <View style={[styles.section, {
+                        borderColor: borderColor == "email" ? '#87d396' : '#d7dbdd'
+                    }]}>
                         <Kohana
-                            style={{ backgroundColor: '#fff',  fontFamily: "Poppins_300Light"}}
+                            style={{ backgroundColor: '#fff', fontFamily: "Poppins_300Light" }}
                             label={'Correo electrónico'}
                             iconClass={FontAwesome5}
                             iconName={'envelope'}
                             iconColor={'#87d396'}
                             inputPadding={5}
                             labelStyle={{ color: '#d7dbdd', fontFamily: "Poppins_300Light" }}
-                          
-                          
+
+
                             useNativeDriver
                             blur
                             keyboardType="email-address"
                             returnKeyType="next"
                             onSubmitEditing={() => passwordRef.current.focus()}
                             value={email}
-
+                            onFocus={() => onFocus("email")}
                             onChangeText={setEmail}
                         />
-                      
+
                     </View>
 
-                    <View style={styles.section}>
-                     
-                    <Kohana
-                            style={{ backgroundColor: '#fff',  fontFamily: "Poppins_300Light"}}
+                    <View style={[styles.section, {
+                        borderColor: borderColor == "password" ? '#87d396' : '#d7dbdd'
+                    }]}>
+
+                        <Kohana
+                            style={{ backgroundColor: '#fff', fontFamily: "Poppins_300Light" }}
                             label={'Contraseña'}
                             iconClass={FontAwesome5}
                             iconName={'lock'}
@@ -153,42 +173,48 @@ function LoginScreen({ navigation }) {
                             inputPadding={5}
                             labelStyle={{ color: '#d7dbdd', fontFamily: "Poppins_300Light" }}
 
-                          
+
                             useNativeDriver
                             ref={passwordRef}
                             secureTextEntry={showPass}
                             returnKeyType="send"
                             value={password}
+                            onFocus={() => onFocus("password")}
                             onChangeText={setPassword}
                             onSubmitEditing={handleSubmit}
 
-                        
+
                         />
-                      
+
 
                         <TouchableOpacity style={styles.btnEye}
                             onPress={verContra.bind()}
                         >
                             <FontAwesome5 name={press == false ? 'eye' : 'eye-slash'}
-                                size={25} color={borderColor == "password" ? '#87d396' : '#87d396'} />
+                                size={25} color={borderColor == "password" ? '#87d396' : '#d7dbdd'} />
                         </TouchableOpacity>
                     </View>
 
 
                 </View>
                 <TouchableOpacity
-
+                    onPress={() => navigation.navigate("Forgot")}
                 >
                     <Text style={styles.forgot}>¿Olvidaste tu contraseña?</Text>
                 </TouchableOpacity>
+                
+                
 
+             
+                <AwesomeButtonRick
+                onPress={handleSubmit}
+                raiseLevel={-4}
 
-                <TouchableOpacity style={styles.login}
-                    onPress={handleSubmit}>
-
+            
+                type="primary">
                     <Text style={styles.textLogin}>Iniciar sesión</Text>
-
-                </TouchableOpacity>
+                </AwesomeButtonRick>
+           
 
                 <View style={styles.singup}>
                     <Text style={[styles.textSingup, {
@@ -200,7 +226,7 @@ function LoginScreen({ navigation }) {
                         <Text style={[styles.textSingup, {
                             color: '#87d396',
                             marginLeft: 3
-                        }]}>¡Registrate!</Text>
+                        }]}>¡Regístrate!</Text>
                     </TouchableOpacity>
 
 
@@ -251,7 +277,7 @@ function LoginScreen({ navigation }) {
 
                 </SCLAlert>
             </View>
-        </ScrollView>
+        </ScrollView >
 
     );
 }
@@ -291,7 +317,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         paddingHorizontal: 15,
         paddingVertical: 10,
-        borderColor:'#d7dbdd',
+
         alignItems: 'center',
         marginTop: 10
     },
@@ -305,6 +331,7 @@ const styles = StyleSheet.create({
     forgot: {
         textAlign: 'right',
         marginTop: 15,
+        marginBottom:15,
         color: '#87d396',
         fontFamily: "Poppins_300Light",
 

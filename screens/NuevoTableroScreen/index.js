@@ -100,7 +100,8 @@ export default function NuevoTableroScreen({ navigation }) {
       <Header>
 
         <BackButton onPress={() => navigation.goBack()}>
-          <FontAwesome5 name="arrow-left" size={24} color="#2ed34f" />
+          <FontAwesome5 name="arrow-left" size={24} color="#87d396"
+          />
         </BackButton>
         <View>
           <Txt style={{ fontFamily: "Poppins_400Regular", }}>Crear tablero</Txt>

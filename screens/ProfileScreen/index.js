@@ -17,9 +17,13 @@ import {
 } from "@expo-google-fonts/poppins"
 
 
+
 import { AppLoading } from "expo"
 
-
+import {
+  SCLAlert,
+  SCLAlertButton
+} from 'react-native-scl-alert'
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons'
 
 import {
@@ -39,8 +43,13 @@ import * as firebase from "firebase";
 
 import ItemTask from "../../components/Photos";
 
+import ItemTaskVideo from "../../components/Videos";
+
 import Fire from "../../utils/Fire";
 import { useGestureHandlerRef } from "react-navigation-stack";
+
+import { TabView, SceneMap, TabBar, } from 'react-native-tab-view';
+
 
 
 function ProfileScreen({ uid, isFocused, navigation, }) {
@@ -61,7 +70,83 @@ function ProfileScreen({ uid, isFocused, navigation, }) {
   const [showPass, setShowPass] = useState(true);
   const [show, setShow] = useState(false);
 
+  const FirstRoute = () => (
+    <View style={[styles.scene, { backgroundColor: '#fff' }]}>
 
+
+      <ImageBack
+        source={require("../../assets/nofoto.png")}
+      >
+
+        <Feed
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          data={posts}
+          renderItem={renderTabs}
+          keyExtractor={item => item.id}
+        >
+
+        </Feed>
+
+      </ImageBack>
+
+
+
+
+    </View>
+  );
+
+  const SecondRoute = () => (
+
+    <View style={[styles.scene, { backgroundColor: '#fff' }]}>
+
+      <ImageBack
+        source={require("../../assets/novideo.png")}
+      >
+
+        <Feed
+
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          data={posts}
+          renderItem={renderVideos}
+          keyExtractor={item => item.id}
+        >
+
+        </Feed>
+      </ImageBack>
+    </View>
+
+  );
+
+  const initialLayout = { width: Dimensions.get('window').width };
+
+  const [index, setIndex] = React.useState(0);
+  const [routes] = React.useState([
+    { key: 'first', icon: 'images', },
+    { key: 'second', icon: 'video' },
+  ]);
+
+  const renderScene = SceneMap({
+    first: FirstRoute,
+    second: SecondRoute,
+  });
+
+
+  const _renderIcon = ({ route }) => {
+    return (
+      <Entypo name={route.icon} size={22} color='#87d396' />
+    );
+  };
+
+  const handleClose = () => {
+    setShowAlert(false)
+  }
+
+  const handleOpen = () => {
+    setShowAlert(true)
+  }
+  const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {
     if (isFocused) {
@@ -132,6 +217,13 @@ function ProfileScreen({ uid, isFocused, navigation, }) {
     setPosts(list)
   }
 
+  const deletePost = async(props)=>{
+    await firebase.firestore().collection("posts").doc(props.id).delete();
+    getDocs();
+    ViewCountPost();
+  }
+
+
 
 
   const renderTabs = ({ item }) => (
@@ -146,11 +238,28 @@ function ProfileScreen({ uid, isFocused, navigation, }) {
       timestamp={item.timestamp}
       text={item.text}
       imagestate={item.imagestate}
-
+      deletePost = {deletePost}
+    
     />
 
   )
 
+  const renderVideos = ({ item }) => (
+    <ItemTaskVideo
+
+      id={item.id}
+      name={item.name}
+      apellido={item.apellido}
+      avatar={item.avatar}
+      pais={item.pais}
+      selectedItemObjects={item.selectedItemObjects}
+      timestamp={item.timestamp}
+      text={item.text}
+      imagestate={item.imagestate}
+      deletePost = {deletePost}
+    />
+
+  )
   LayoutAnimation.easeInEaseOut();
 
   function handleLogout() {
@@ -206,28 +315,37 @@ function ProfileScreen({ uid, isFocused, navigation, }) {
   };
 
   return (
-
+        
     <SafeAreaView style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false} style={{ marginTop: 15 }}
-      ref={(scrollViewRef)}
+   
+
+      <ScrollView showsVerticalScrollIndicator={false} style={{ marginTop: 15}}
+        ref={(scrollViewRef)}
       >
 
 
-        <View style={{ alignSelf: "center" }}>
+        <View style={{ alignSelf: "center", }}>
           <View style={styles.home}>
             <TouchableOpacity onPress={() => { navigation.navigate('Inicio') }}>
               <FontAwesome5 name="home" size={24} color="#87d396" />
             </TouchableOpacity>
+
+          </View>
+
+          <View style={styles.menu}>
+            <TouchableOpacity onPress={() => { navigation.navigate('menuScreen') }}>
+              <FontAwesome5 name="bars" size={24} color="#87d396" />
+            </TouchableOpacity>
           </View>
           <View style={styles.profileImage}>
 
-            <Image style={styles.image} resizeMode="center" source={{ uri: user.avatar }} />
+            <Image style={styles.image} resizeMode="cover" source={{ uri: user.avatar }} />
 
           </View>
 
 
           <View style={styles.dm}>
-            <TouchableOpacity onPress={handleLogout}>
+            <TouchableOpacity onPress={handleOpen}>
               <FontAwesome5 name="sign-out-alt" size={12} color="#fff" />
             </TouchableOpacity>
           </View>
@@ -270,8 +388,8 @@ function ProfileScreen({ uid, isFocused, navigation, }) {
 
 
           <View style={[styles.statsBox, { borderColor: "#DFD8C8", borderLeftWidth: 1, borderRightWidth: 1 }]}>
-            <TouchableOpacity 
-         onPress={scrollHastaElFinal}
+            <TouchableOpacity
+              onPress={scrollHastaElFinal}
             >
 
               <Text style={[styles.text, { fontSize: 24 }]}>{countPost}</Text>
@@ -312,22 +430,72 @@ function ProfileScreen({ uid, isFocused, navigation, }) {
               />
             </TouchableOpacity>
           </View>
-          <ImageBack source={require("../../assets/no.png")}>
+          <TabView
 
-            <Feed
-              horizontal={true}
-              data={posts}
-              renderItem={renderTabs}
-              keyExtractor={item => item.id}
-            >
+            navigationState={{ index, routes }}
+            renderScene={renderScene}
+            onIndexChange={setIndex}
+            initialLayout={initialLayout}
 
-            </Feed>
+            renderTabBar={props =>
+              <TabBar
+                {...props}
+                indicatorStyle={{
+                  backgroundColor: '#87d396', height: 3,
+                  width: 80, marginLeft: 50, marginBottom: 5
+                }}
+                renderIcon={_renderIcon}
+                style={{
+                  backgroundColor: '#fff',
 
-          </ImageBack>
+
+                }}
+         
+              />
+            }
+            render
+
+            lazy={true}
+            scrollEnabled={true}
+
+
+          />
+
+          <SCLAlert
+            theme="info"
+            show={showAlert}
+            title="¿Salir de Lithy?"
+            subtitle={""}
+            titleStyle={{ fontFamily: "Poppins_600SemiBold", fontSize: 22 }}
+
+            cancellable={true}
+            onRequestClose={handleClose}
+            subtitleStyle={{
+              fontSize: 18, fontFamily: "Poppins_300Light",
+            }}
+            headerIconComponent={<FontAwesome5 name="sign-out-alt" size={35} color="#FFF" />}
+
+          >
+
+            <SCLAlertButton
+              theme="info"
+              textStyle={{ color: "#fff", fontFamily: "Poppins_600SemiBold" }}
+              onPress={handleLogout}>
+              Salir
+                </SCLAlertButton>
+            <SCLAlertButton
+              theme="info"
+              textStyle={{ color: "#fff", fontFamily: "Poppins_600SemiBold" }}
+              onPress={handleClose}>
+              Cancelar
+                </SCLAlertButton>
+          </SCLAlert>
+
         </View>
 
       </ScrollView>
     </SafeAreaView>
+    
 
   );
 }
@@ -339,7 +507,7 @@ export default withNavigationFocus(ProfileScreen);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFF",
+    backgroundColor: "#fff",
   },
   text: {
     fontFamily: "Poppins_300Light",
@@ -359,7 +527,18 @@ const styles = StyleSheet.create({
   image: {
     flex: 1,
     height: undefined,
-    width: undefined
+    width: undefined,
+    
+    borderColor:'#72ba83',
+    borderWidth:1,
+    borderRadius: 190/2,
+  
+  },
+  profileImage: {
+    width: 150,
+    height: 150,
+    
+    
   },
   titleBar: {
     flexDirection: "row",
@@ -372,12 +551,6 @@ const styles = StyleSheet.create({
     color: "#AEB5BC",
     textTransform: "uppercase",
     fontWeight: "500"
-  },
-  profileImage: {
-    width: 150,
-    height: 150,
-    borderRadius: 100,
-    overflow: "hidden"
   },
 
 
@@ -414,6 +587,7 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 20,
+    
     alignItems: "center",
     justifyContent: "center"
   },
@@ -422,6 +596,17 @@ const styles = StyleSheet.create({
 
     position: "absolute",
     left: -100,
+    bottom: 110,
+    width: 45,
+    height: 45,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  menu: {
+
+    position: "absolute",
+    left: 200,
     bottom: 110,
     width: 45,
     height: 45,
@@ -462,5 +647,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignSelf: "center",
     marginTop: 32
+  },
+  tabView: {
+    flex: 1,
+    padding: 10,
+    backgroundColor: 'rgba(0,0,0,0.01)',
+  },
+  esto: {
+
+
+  },
+  scene: {
+    flex: 1,
   },
 });

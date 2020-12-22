@@ -201,7 +201,8 @@ function EditProfileScreen({ uid, isFocused, navigation, }) {
       <Header>
 
         <BackButton onPress={() => navigation.goBack()}>
-          <FontAwesome5 name="arrow-left" size={24} color="#2ed34f" />
+          <FontAwesome5 name="arrow-left" size={24} color="#87d396"
+          />
         </BackButton>
         <View>
           <Txt style={{ fontFamily: "Poppins_300Light", }}>Actualizar mis datos</Txt>
@@ -246,16 +247,17 @@ function EditProfileScreen({ uid, isFocused, navigation, }) {
 
         <Kohana
           style={{ backgroundColor: '#fff', fontFamily: "Poppins_300Light" }}
-          label={'Mi nombre ' + user.name}
+          label={'Mi nombre'}
           iconClass={FontAwesome5}
           iconName={'user-alt'}
           iconColor={'#87d396'}
           inputPadding={5}
+
           labelStyle={{ color: '#d7dbdd', fontFamily: "Poppins_300Light" }}
 
           useNativeDriver
           onChangeText={setName}
-          maxLength={18}
+          maxLength={10}
           value={name}
 
           returnKeyType="next"
@@ -269,7 +271,7 @@ function EditProfileScreen({ uid, isFocused, navigation, }) {
 
         <Kohana
           style={{ backgroundColor: '#fff', fontFamily: "Poppins_300Light" }}
-          label={'Mi apellido ' + user.apellido}
+          label={'Mi apellido'}
           iconClass={FontAwesome5}
           iconName={'user-tag'}
           iconColor={'#87d396'}
@@ -280,7 +282,7 @@ function EditProfileScreen({ uid, isFocused, navigation, }) {
           useNativeDriver
           value={apellido}
           onChangeText={setApellido}
-          maxLength={18}
+          maxLength={10}
 
           returnKeyType="next"
           onSubmitEditing={() => descRef.current.focus()}

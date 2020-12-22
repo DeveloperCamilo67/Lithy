@@ -12,7 +12,7 @@ import { LookupModal } from "react-native-lookup-modal";
 import Fire from "../../utils/Fire";
 import * as firebase from "firebase";
 import { Kohana } from 'react-native-textinput-effects';
-
+import { Checkbox } from 'react-native-paper';
 //fuentes
 import {
   useFonts, Poppins_100Thin, Poppins_100Thin_Italic, Poppins_200ExtraLight, Poppins_200ExtraLight_Italic,
@@ -24,6 +24,7 @@ import {
 import { AppLoading } from "expo"
 
 import Country from '../../components/Countries'
+import AwesomeButtonRick from 'react-native-really-awesome-button/src/themes/red';
 
 import UserPermissions from "../../utils/userPermissions";
 import * as ImagePicker from "expo-image-picker";
@@ -58,7 +59,7 @@ export default function RegisterScreen({ navigation }) {
   const [showAlertTres, setShowAlertTres] = useState(false);
   const [pais, setPais] = useState(<Text style={[styles.textInput, { color: "gray" }]}>  Selecciona tu país</Text>);
   const [errorMessage, setErrorMessage] = useState(null);
-
+  const [checked, setChecked] = React.useState(false);
   function handleSubmit() {
     const user = {
       name,
@@ -71,7 +72,7 @@ export default function RegisterScreen({ navigation }) {
     };
 
     if ((name).length == "" || (apellido).length == "" || (email).length == ""
-      || (password).length == "") {
+      || (password).length == "", avatar == null) {
 
       handleOpen();
 
@@ -82,6 +83,11 @@ export default function RegisterScreen({ navigation }) {
 
 
 
+  }
+
+  function onFocus(value) {
+
+    setBorderColor(value)
   }
 
   const handleClose = () => {
@@ -166,7 +172,8 @@ export default function RegisterScreen({ navigation }) {
 
   return (
 
-    <View style={styles.container}>
+
+    <ScrollView style={styles.container}>
 
       <Text style={styles.title}>Registrarse</Text>
       <Text style={styles.text}>¡Regístrate para comenzar!</Text>
@@ -183,12 +190,15 @@ export default function RegisterScreen({ navigation }) {
 
       <View style={styles.action}>
 
-        <View style={styles.section}>
+        <View style={[styles.section, {
+          borderColor: borderColor == "name" ? '#87d396' : '#d7dbdd'
+        }]}>
           <Kohana
             style={{ backgroundColor: '#fff', fontFamily: "Poppins_300Light" }}
             label={'Mi nombre'}
             iconClass={FontAwesome5}
             iconName={'user-alt'}
+            maxLength={10}
             iconColor={'#87d396'}
             inputPadding={5}
             labelStyle={{ color: '#d7dbdd', fontFamily: "Poppins_300Light" }}
@@ -198,16 +208,20 @@ export default function RegisterScreen({ navigation }) {
             returnKeyType="next"
             onSubmitEditing={() => apellidoRef.current.focus()}
             value={name}
+            onFocus={() => onFocus("name")}
             onChangeText={setName}
           />
 
         </View>
 
-        <View style={styles.section}>
+        <View style={[styles.section, {
+          borderColor: borderColor == "apellido" ? '#87d396' : '#d7dbdd'
+        }]}>
           <Kohana
             style={{ backgroundColor: '#fff', fontFamily: "Poppins_300Light" }}
             label={'Mi apellido'}
             iconClass={FontAwesome5}
+            maxLength={10}
             iconName={'user-tag'}
             iconColor={'#87d396'}
             inputPadding={5}
@@ -219,13 +233,16 @@ export default function RegisterScreen({ navigation }) {
             ref={apellidoRef}
             onSubmitEditing={() => emailRef.current.focus()}
             value={apellido}
+            onFocus={() => onFocus("apellido")}
             onChangeText={setApellido}
           />
 
         </View>
 
-        <View style={styles.section}>
-        <Kohana
+        <View style={[styles.section, {
+          borderColor: borderColor == "email" ? '#87d396' : '#d7dbdd'
+        }]}>
+          <Kohana
             style={{ backgroundColor: '#fff', fontFamily: "Poppins_300Light" }}
             label={'Correo electrónico'}
             iconClass={FontAwesome5}
@@ -241,12 +258,15 @@ export default function RegisterScreen({ navigation }) {
             ref={emailRef}
             onSubmitEditing={() => passwordRef.current.focus()}
             value={email}
+            onFocus={() => onFocus("email")}
             onChangeText={setEmail}
           />
 
         </View>
 
-        <View style={styles.section}>
+        <View style={[styles.section, {
+          borderColor: borderColor == "pais" ? '#87d396' : '#d7dbdd'
+        }]}>
           <MaterialIcons name="location-on" size={28}
             color='#87d396' />
           <Text style={styles.welcome}>{pais}</Text>
@@ -256,6 +276,7 @@ export default function RegisterScreen({ navigation }) {
             data={Country}
             value={pais}
             selectText={"Seleccione"}
+            onFocus={() => onFocus("pais")}
             placeholder={"Busca tu país..."}
 
             onSelect={item => {
@@ -285,8 +306,10 @@ export default function RegisterScreen({ navigation }) {
 
         </View>
 
-        <View style={styles.section}>
-        <Kohana
+        <View style={[styles.section, {
+          borderColor: borderColor == "password" ? '#87d396' : '#d7dbdd'
+        }]}>
+          <Kohana
             style={{ backgroundColor: '#fff', fontFamily: "Poppins_300Light" }}
             label={'Contraseña'}
             iconClass={FontAwesome5}
@@ -299,42 +322,81 @@ export default function RegisterScreen({ navigation }) {
             useNativeDriver
             secureTextEntry={showPass}
             ref={passwordRef}
-            returnKeyType="send"
+            returnKeyType="done"
             value={password}
+            onFocus={() => onFocus("password")}
             onChangeText={setPassword}
-            onSubmitEditing={handleSubmit}
+
           />
 
-         
+
           <TouchableOpacity style={styles.btnEye}
             onPress={verContra.bind()}
           >
             <FontAwesome5 name={press == false ? 'eye' : 'eye-slash'}
-              size={25} color={borderColor == "password" ? '#87d396' : '#87d396'} />
+              size={25} color={borderColor == "password" ? '#87d396' : '#d7dbdd'} />
           </TouchableOpacity>
 
         </View>
 
       </View>
 
-      <TouchableOpacity style={styles.login} onPress={handleSubmit}
-      >
+      <View style={[styles.singup], { flexDirection: 'row', }}>
+        <Checkbox status={checked ? 'checked' : 'unchecked'}
+          onPress={() => {
+            setChecked(!checked);
+          }}
+          color="#af42de"
 
-        <View style={{
+          uncheckedColor="#87d396"
+
+        />
+
+        <Text style={[styles.textSingup, {
+          color: 'gray',
+          top: 10,
+        }]}>Acepto los </Text>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("Terms")}
+
+        >
+          <Text style={[styles.textSingup, {
+            color: '#87d396',
+            marginLeft: 3,
+            top: 10
+          }]}>términos y condiciones</Text>
+        </TouchableOpacity>
+
+      </View>
+
+      <AwesomeButtonRick
+        onPress={handleSubmit}
+        raiseLevel={-4}
+        disabled={checked == false}
+        style={[
+
+          {
+            backgroundColor:
+
+              checked == false
+                ? '#b5d3bb'
+                : '#87d396'
+
+          }, styles.login
+      
+        ]}
+
+        type="primary">
+           <View style={{
           paddingVertical: 15,
           paddingHorizontal: 10,
           flexDirection: "row",
           justifyContent: "space-between",
           alignItems: "center"
         }}>
-
-
-          <Text style={styles.textLogin}>Registrarse
-      </Text>
-
-        </View>
-
-      </TouchableOpacity>
+        <Text style={styles.textLogin}>Registrarse</Text></View>
+      </AwesomeButtonRick>
+    
       <View style={styles.singup}>
         <Text style={[styles.textSingup, {
           color: 'gray'
@@ -404,7 +466,9 @@ export default function RegisterScreen({ navigation }) {
                 </SCLAlertButton>
       </SCLAlert>
 
-    </View>
+    </ScrollView>
+
+
   );
 }
 
@@ -413,9 +477,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-    justifyContent: 'center',
     paddingHorizontal: 30,
-    paddingVertical: 100
+
   },
   title: {
     color: '#87d396',
@@ -426,6 +489,11 @@ const styles = StyleSheet.create({
     color: 'gray',
     fontFamily: "Poppins_300Light",
   },
+  terms: {
+    color: 'gray',
+    fontFamily: "Poppins_300Light",
+    margin: 6
+  },
   section: {
     flexDirection: 'row',
     borderWidth: 1,
@@ -433,14 +501,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 10,
     alignItems: 'center',
-    borderColor:'#d7dbdd',
     marginTop: 10
   },
   welcome: {
     flex: 1,
     paddingLeft: 10,
-    fontSize:16,
-    
+    fontSize: 16,
+
     fontFamily: "Poppins_700Bold",
   },
   sectionuno: {
@@ -464,7 +531,6 @@ const styles = StyleSheet.create({
   login: {
     width: '100%',
     height: 40,
-    backgroundColor: '#87d396',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 25,

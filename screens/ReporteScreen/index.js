@@ -6,7 +6,6 @@ import {
   Container,
   Header,
   Post,
-  Title,
   BackButton,
   InputContainer,
   Avatar,
@@ -15,7 +14,6 @@ import {
   ViewPhoto,
   ImageState,
   Txt,
-  TitleDos,
   HeaderDos,
 
 } from "./styles";
@@ -32,9 +30,10 @@ import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
 import Fire from "../../utils/Fire";
 
-
+import { Title, Caption, Chip } from 'react-native-paper';
 const firebase = require("firebase");
 require("firebase/firestore");
+import { SectionRow, SettingsPage, NavigateRow, SliderRow } from 'react-native-settings-view';
 
 
 
@@ -47,63 +46,142 @@ export default function ReporteScreen({ navigation }) {
     setShow(false)
   }
 
-  const irHacia = () =>{
+  const irHacia = () => {
     setShow(false)
   }
   const handleOpen = () => {
     setShow(true)
   }
+
+  const ya = () => {
+    { visible ? 'selected' : 'selected' }
+  }
+
+  const [visible, setVisible] = useState(false);
+
+
   return (
 
     <Container>
+
+
+
       <Header>
 
         <BackButton onPress={() => navigation.goBack()}>
-          <FontAwesome5 name="arrow-left" size={24} color="#2ed34f" />
+          <FontAwesome5 name="arrow-left" size={24} color="#87d396" />
         </BackButton>
         <View>
-          <Txt>Motivos del reporte</Txt>
+          <Txt style={{fontFamily: "Poppins_400Regular",}}>Motivos del reporte</Txt>
         </View>
 
       </Header>
 
-      <TouchableOpacity onPress={() => { navigation.navigate('tableros') }}>
+      <View style={{ margin: 10 }}>
+        <Title style={{ textAlign: 'justify',fontFamily: "Poppins_500Medium"}}>
+          Selecciona el motivo del reporte
+    </Title>
+        <Caption style={{ textAlign: 'justify', fontSize: 15, marginEnd: 55,
+      fontFamily: "Poppins_400Regular"}}>
+          Selecciona un motivo para poder reportar esta publicación.
+    </Caption>
+
+
+
+
         <View style={styles.searchSection}>
+          <SettingsPage>
+            <SectionRow
+              titleStyle={{
+                backgroundColor: '#fff', color: '#c2c2c2', marginTop: 20,
 
-          <Text style={styles.input}>Blablabla... </Text>
-          <Entypo style={styles.searchIcon} name="chevron-right" size={20} color="#2ed34f" />
+              }}
+            >
+              <NavigateRow
+
+                textStyle={styles.title}
+                text="Spam"
+                onPress={() => navigation.navigate("Spam")}
+
+
+              />
+
+              <NavigateRow
+
+                textStyle={styles.title}
+                text="Información errónea"
+
+                onPress={() => navigation.navigate("Erroneo")}
+              />
+
+          
+
+              <NavigateRow
+
+                textStyle={styles.title}
+                text="Publicación indebida"
+
+                onPress={() => navigation.navigate("Indebido")}
+              />
+              <NavigateRow
+
+                textStyle={styles.title}
+                text="Mal uso de #etiquetas"
+
+                onPress={() => navigation.navigate("MalUso")}
+              />
+              <NavigateRow
+
+                textStyle={styles.title}
+                text="Acoso a otros usuarios"
+
+                onPress={() => navigation.navigate("Acoso")}
+              />
+              <NavigateRow
+
+                textStyle={styles.title}
+                text="Desnudez o pornografía"
+
+                onPress={() => navigation.navigate("NoPor")}
+              />
+              <NavigateRow
+
+                textStyle={styles.title}
+                text="Autolesiones"
+                onPress={() => navigation.navigate("Autolesiones")}
+              />
+
+
+            </SectionRow>
+
+
+          </SettingsPage>
+
+
+
         </View>
-      </TouchableOpacity>
 
-      <HeaderDos>
+      </View>
 
-        <Post onPress={() => navigation.goBack()}>
-
-          <TitleDos><FontAwesome5 name="arrow-left" size={15} />{" "}Volver</TitleDos>
-
-        </Post>
-      </HeaderDos>
-      <SCLAlert
-        theme="danger"
-        show={show}
-        title="Reportar"
-        subtitle="¿Deseas reportar ésta publicación?"
-        cancellable={true}
-        onRequestClose={handleClose}
-      >
-        <SCLAlertButton theme="danger" onPress={irHacia}>Aceptar</SCLAlertButton>
-        <SCLAlertButton theme="danger" onPress={handleClose}>Cancelar</SCLAlertButton>
-
-      </SCLAlert>
     </Container>
+
   )
 }
+
 const styles = StyleSheet.create({
   center: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 30
+  },
+  searchSection: {
+
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+
+
   },
   container: {
     paddingTop: 40,
@@ -154,6 +232,12 @@ const styles = StyleSheet.create({
     fontSize: 25,
     color: '#000',
   },
+  title: {
+    fontFamily: "Poppins_400Regular",
+    fontSize: 22,
+    right:10
+
+  }
 })
 
 const Loading = styled.ActivityIndicator.attrs((props) => ({

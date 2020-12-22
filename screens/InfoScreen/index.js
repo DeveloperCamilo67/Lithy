@@ -6,7 +6,6 @@ import {
   Container,
   Header,
   Post,
-  Title,
   BackButton,
   InputContainer,
   Avatar,
@@ -26,8 +25,10 @@ import {
   SCLAlert,
   SCLAlertButton
 } from 'react-native-scl-alert'
+import { SectionRow, SettingsPage, NavigateRow, SliderRow } from 'react-native-settings-view';
 
-import {useFonts,Poppins_100Thin, Poppins_100Thin_Italic, Poppins_200ExtraLight, Poppins_200ExtraLight_Italic,
+import {
+  useFonts, Poppins_100Thin, Poppins_100Thin_Italic, Poppins_200ExtraLight, Poppins_200ExtraLight_Italic,
   Poppins_300Light, Poppins_300Light_Italic, Poppins_400Regular, Poppins_400Regular_Italic, Poppins_500Medium,
   Poppins_500Medium_Italic, Poppins_600SemiBold, Poppins_600SemiBold_Italic, Poppins_700Bold, Poppins_700Bold_Italic,
   Poppins_800ExtraBold, Poppins_800ExtraBold_Italic, Poppins_900Black, Poppins_900Black_Italic
@@ -38,25 +39,25 @@ import { AppLoading } from "expo"
 const firebase = require("firebase");
 require("firebase/firestore");
 
+import { Title, Caption, Chip } from 'react-native-paper';
 
-
-export default function InfoScreen({ navigation },props) {
+export default function InfoScreen( {navigation}, props ) {
 
   const [show, setShow] = useState(false);
 
   const onShare = async () => {
     try {
       const result = await Share.share({
-      
-        title:'Instala lithy',
-        message:'Hola!, te invitamos a instalar la app Lithy',
+
+        title: 'Instala lithy',
+        message: 'Hola!, te invitamos a instalar la app Lithy',
 
       });
       if (result.action === Share.sharedAction) {
         if (result.activityType) {
           // shared with activity type of result.activityType
         } else {
-            
+
         }
       } else if (result.action === Share.dismissedAction) {
         // dismissed
@@ -71,7 +72,7 @@ export default function InfoScreen({ navigation },props) {
     setShow(false)
   }
 
-  const irHacia = () =>{
+  const irHacia = () => {
     navigation.navigate("reporte")
     setShow(false)
   }
@@ -81,12 +82,12 @@ export default function InfoScreen({ navigation },props) {
 
   const [fontsLoaded, error] = useFonts({
     Poppins_100Thin, Poppins_100Thin_Italic, Poppins_200ExtraLight, Poppins_200ExtraLight_Italic,
-  Poppins_300Light, Poppins_300Light_Italic, Poppins_400Regular, Poppins_400Regular_Italic, Poppins_500Medium,
-  Poppins_500Medium_Italic, Poppins_600SemiBold, Poppins_600SemiBold_Italic, Poppins_700Bold, Poppins_700Bold_Italic,
-  Poppins_800ExtraBold, Poppins_800ExtraBold_Italic, Poppins_900Black, Poppins_900Black_Italic
+    Poppins_300Light, Poppins_300Light_Italic, Poppins_400Regular, Poppins_400Regular_Italic, Poppins_500Medium,
+    Poppins_500Medium_Italic, Poppins_600SemiBold, Poppins_600SemiBold_Italic, Poppins_700Bold, Poppins_700Bold_Italic,
+    Poppins_800ExtraBold, Poppins_800ExtraBold_Italic, Poppins_900Black, Poppins_900Black_Italic
   })
 
-  if(!fontsLoaded) {
+  if (!fontsLoaded) {
     return <AppLoading />;
   }
 
@@ -96,73 +97,79 @@ export default function InfoScreen({ navigation },props) {
       <Header>
 
         <BackButton onPress={() => navigation.goBack()}>
-          <FontAwesome5 name="arrow-left" size={24} color="#2ed34f" />
+          <FontAwesome5 name="arrow-left" size={24} color="#87d396"
+          />
         </BackButton>
         <View>
-          <Txt style={{ fontFamily: "Poppins_400Regular",}}>¿Que quieres hacer?</Txt>
+          <Txt style={{ fontFamily: "Poppins_400Regular", }}>¿Que quieres hacer?</Txt>
         </View>
 
       </Header>
 
-      <TouchableOpacity onPress={() => { navigation.navigate('tableros') }}>
-        <View style={styles.searchSection}>
 
-          <Text style={styles.input}>Guardar en mis tableros </Text>
-          <Entypo style={styles.searchIcon} name="chevron-right" size={20} color="#2ed34f" />
-        </View>
-      </TouchableOpacity>
+      <View style={{ margin: 10 }}>
+        <Title style={{ textAlign: 'justify', fontFamily: "Poppins_500Medium" }}>
+          ¿Que deseas hacer?
+    </Title>
+        <Caption style={{
+          textAlign: 'justify', fontSize: 15, marginEnd: 55,
+          fontFamily: "Poppins_400Regular"
+        }}>
+          Selecciona una opción
+    </Caption>
 
-      <TouchableOpacity onPress={onShare}>
 
-        <View style={styles.searchSection}>
 
-          <Text style={styles.input}>Compartir esta publicación</Text>
-          <Entypo style={styles.searchIcon} name="chevron-right" size={20} color="#2ed34f" />
-        </View>
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={handleOpen}>
-        <View style={styles.searchSection}>
-
-          <Text style={styles.input}>Reportar esta publicación</Text>
-          <Entypo style={styles.searchIcon} name="chevron-right" size={20} color="#2ed34f" />
-        </View>
-      </TouchableOpacity>
-
-      <TouchableOpacity>
 
         <View style={styles.searchSection}>
-          <Text style={styles.input}>No me interesa...</Text>
-          <Entypo style={styles.searchIcon} name="chevron-right" size={20} color="#2ed34f" />
+          <SettingsPage>
+            <SectionRow
+              titleStyle={{
+                backgroundColor: '#fff', color: '#c2c2c2', marginTop: 20,
+
+              }}
+            >
+              <NavigateRow
+
+                textStyle={styles.title}
+                text="Guardar en mis tableros"
+                onPress={() => { navigation.navigate('tableros') }}
+
+
+              />
+
+              <NavigateRow
+
+                textStyle={styles.title}
+                text="Compartir esta publicación"
+
+                onPress={onShare}
+              />
+
+
+
+              <NavigateRow
+
+                textStyle={styles.title}
+                text="Reportar esta publicación"
+
+                onPress={irHacia}
+              />
+
+
+
+            </SectionRow>
+
+
+          </SettingsPage>
+
+
+
+
         </View>
-      </TouchableOpacity>
-      <Name style={{ fontFamily: "Poppins_400Regular",}}>{props.name}{" "}{props.apellido}</Name>
-      <HeaderDos>
-   
+        <Name style={{ fontFamily: "Poppins_400Regular", }}>{props.name}</Name>
+      </View>
 
-        <Post onPress={() => navigation.goBack()}>
-
-          <TitleDos style={{fontFamily: "Poppins_500Medium"}}><FontAwesome5 name="arrow-left" size={15} />{" "}Volver</TitleDos>
-
-        </Post>
-      </HeaderDos>
-      <SCLAlert
-        theme="danger"
-        show={show}
-        title="Reportar"
-        subtitle="¿Deseas reportar ésta publicación?"
-        subtitleStyle={{ fontSize: 17, fontFamily: "Poppins_300Light", }}
-        titleStyle={{ fontFamily:"Poppins_600SemiBold",}}
-        headerIconComponent={<FontAwesome5 name="flag" size={35} color="#FFF" />}
-        cancellable={true}
-        onRequestClose={handleClose}
-      >
-        <SCLAlertButton theme="danger" onPress={irHacia}  
-        textStyle={{ color: "#FFF", fontFamily:"Poppins_600SemiBold",}}>Aceptar</SCLAlertButton>
-        <SCLAlertButton theme="danger" onPress={handleClose} 
-        textStyle={{ color: "#FFF", fontFamily:"Poppins_600SemiBold",}}>Cancelar</SCLAlertButton>
-
-      </SCLAlert>
     </Container>
   )
 }
@@ -221,8 +228,14 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     fontSize: 25,
     color: '#000',
-    fontFamily:"Poppins_300Light"
+    fontFamily: "Poppins_300Light"
   },
+  title: {
+    fontFamily: "Poppins_400Regular",
+    fontSize: 18,
+    right: 10
+
+  }
 })
 
 const Loading = styled.ActivityIndicator.attrs((props) => ({

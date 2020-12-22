@@ -35,8 +35,8 @@ export const _dynamicLogoStyle = (
   logoScale,
   logoOpacity,
   {
-    width: logoWidth || 250,
-    height: logoHeight || 250,
+    width: logoWidth || 350,
+    height: logoHeight || 350,
     
   },
 ];

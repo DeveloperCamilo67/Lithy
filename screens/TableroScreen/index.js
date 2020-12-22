@@ -90,7 +90,8 @@ function TableroScreen({ uid,navigation, isFocused }) {
       let name = document.data().name
       let apellido = document.data().apellido
       let text = document.data().text
-      let obj = {id, name, apellido, text}
+     
+      let obj = {id, name, apellido, text,}
       list.push(obj)
 
     })
@@ -110,6 +111,7 @@ function TableroScreen({ uid,navigation, isFocused }) {
       id={item.id}
       name={item.name}
       text = {item.text}
+    
       deleteTab = {deleteTab}
 
     />
@@ -132,7 +134,8 @@ function TableroScreen({ uid,navigation, isFocused }) {
       <Header>
 
         <BackButton onPress={() => navigation.goBack()}>
-          <FontAwesome5 name="arrow-left" size={24} color="#2ed34f" />
+          <FontAwesome5 name="arrow-left" size={24} color="#87d396"
+          />
         </BackButton>
         <View>
           <Txt style={{ fontFamily: "Poppins_400Regular",}}>Mis tableros</Txt>
